@@ -1,0 +1,23 @@
+{
+  "name": "job-portal",
+  "version": "1.0.0",
+  "description": "The project is a web-based job search assistant that aggregates technical job postings such as Software Development, DevOps, Frontend, and Backend from multiple job portals like Naukri.com and Indeed, and displays them in one centralized platform.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
