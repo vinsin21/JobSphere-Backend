@@ -5,48 +5,39 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { mapIndeedDataToJobSchema, mapLinkedinDataToJobSchema } from "../utils/mappers.js";
 
-/**
- * @description Get all jobs with filtering, pagination, and search
- * @route GET /api/v1/jobs
- */
 const getAllJobs = asyncHandler(async (req, res) => {
-    // --- 1. DESTRUCTURE ALL POSSIBLE QUERY PARAMETERS ---
-    const { search, location, experienceLevel, jobType } = req.query;
+    // 1. Destructure the new 'sourcePlatform' query parameter
+    const { search, location, experienceLevel, jobType, sourcePlatform } = req.query;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
-    // --- 2. CREATE A DYNAMIC FILTER OBJECT ---
     const filter = {};
 
-    // If a 'search' query is provided, create a case-insensitive regex search
-    // on the 'title' AND the 'skills' fields for higher relevance.
     if (search) {
         const searchRegex = { $regex: search, $options: 'i' };
         filter.$or = [
             { title: searchRegex },
-            { skills: searchRegex } // This will search within the skills array
+            { skills: searchRegex }
         ];
     }
-
-    // Add location filter (case-insensitive) if provided
     if (location) {
         filter.location = { $regex: location, $options: 'i' };
     }
-
-    // Add exact match for experience level if provided
     if (experienceLevel) {
         filter.experienceLevel = experienceLevel;
     }
-
-    // Add case-insensitive partial match for job type if provided
-    // This handles cases like "Full-time" vs "Permanent, Full-time"
     if (jobType) {
         filter.jobType = { $regex: jobType, $options: 'i' };
     }
 
-    // --- 3. EXECUTE THE QUERIES WITH THE DYNAMIC FILTER ---
-    // Pass the filter object to both the find and countDocuments methods.
+    // 2. Add the new filter logic for the source platform
+    // We do an exact match, which is very efficient.
+    // If 'sourcePlatform' is empty or not provided, this block is skipped.
+    if (sourcePlatform) {
+        filter.sourcePlatform = sourcePlatform;
+    }
+
     const jobs = await Job.find(filter)
         .sort({ postedOn: -1 })
         .skip(skip)
@@ -66,6 +57,7 @@ const getAllJobs = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, responseData, "Jobs fetched successfully"));
 });
 
+// --- addJobs and getJobById functions remain unchanged ---
 
 const addJobs = asyncHandler(async (req, res) => {
     const { platform, rawJobs } = req.body;
@@ -106,7 +98,7 @@ const getJobById = asyncHandler(async (req, res) => {
     }
     const job = await Job.findById(jobId);
     if (!job) {
-        throw new ApiError(44, "Job not found");
+        throw new ApiError(404, "Job not found");
     }
     return res
         .status(200)
@@ -114,4 +106,3 @@ const getJobById = asyncHandler(async (req, res) => {
 });
 
 export { getAllJobs, addJobs, getJobById };
-
