@@ -6,7 +6,9 @@
 Welcome to the backend repository for JobSphere, a unified job search assistant designed to aggregate technical job postings from multiple platforms into a single, easy-to-use interface. This backend is a robust RESTful API built with Node.js, Express, and MongoDB.
 
 **Live Backend API:** [jobsphere-backend-jsos.onrender.com](https://jobsphere-backend-jsos.onrender.com/api/v1/jobs)
+
 **Live Frontend:** [jobsphare.netlify.app](https://jobsphare.netlify.app)
+
 **Frontend Repo:** [frontend Repo](https://github.com/vinsin21/nextjs-job-portal)
 
 
